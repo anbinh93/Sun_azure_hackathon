@@ -1,0 +1,6 @@
+{
+  "assistant_init": "assistant_init.txt",
+  "system_init": "system_init.txt",
+  "system_recal_current_query": "system_recal_current_query.txt",
+  "system_guide_preview_query": "system_guide_preview_query.txt"
+}

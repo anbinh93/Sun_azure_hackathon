@@ -1,0 +1,4 @@
+Dựa trên những tiêu chí mà người dùng muốn, chúng ta đã lọc ra được những môn học phù hợp nhất với người dùng.
+Dưới đây là những môn học đó (Chúng được tổ chức theo định dạng csv)
+Hãy thật sáng suốt, tập trung để tư vấn cho người dùng có một thời khóa biểu hợp lý nhé
+Và nhớ là tuyệt đối chỉ tư vấn dựa trên những thời khóa biểu mà tôi cung cấp thôi nhé, không được tư vấn thêm những chi tiết khác không có trong dữ liệu này:
