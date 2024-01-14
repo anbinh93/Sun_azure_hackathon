@@ -63,7 +63,7 @@ def update_data(data: dict):
         }
     """
     # Open the workbook
-    workbook = files.open('Đăng ký xin mở thêm lớp')
+    workbook = files.open('Haha')
 
     # Get all sheets
     sheet = workbook.sheet1

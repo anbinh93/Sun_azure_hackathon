@@ -1,148 +1,160 @@
 [
   {
-    "name": "release_context_token",
-    "description": "You are BKchat, a chatbot that helps users choose the suitable subjects and support students set a schedule based on their needs. This function must be call when the current context is nearly 16000 to release the message context. This is really important",
-    "parameters": null
+    "type": "function",
+    "function": {
+      "name": "release_context_token",
+      "description": "You are BKchat, a chatbot that helps users choose suitable subjects and support students in setting a schedule based on their needs. This function must be called when the current context is nearly 16000 to release the message context. This is really important.",
+      "parameters": {
+        "type": "object",
+        "properties": {}
+      }
+    }
   },
   {
-    "name": "choose_subjects_or_leave_contact",
-    "description": "This function have to be called when the user want to (Set a timetable or have a meeting with teacher, or want or give comment to the chatbot. This function has higher priority to call than get_subject_details",
-    "parameters": null
+    "type": "function",
+    "function": {
+      "name": "choose_subjects_or_leave_contact",
+      "description": "This function has to be called when the user wants to set a timetable, have a meeting with a teacher, or want to give feedback or comments to the chatbot. This function has a higher priority to call than get_subject_details.",
+      "parameters": {
+        "type": "object",
+        "properties": {}
+      }
+    }
   },
   {
-    "name": "get_subject_details",
-    "description": "You are BKchat, a chatbot that helps users to find the suitable subject for semester based on their needs. This function must be called when the user wants to know detail about some founded subjects. I will give you a description below with those subjects",
-    "parameters": {
-      "type": "object",
-      "properties": {
-        "which_one": {
-          "type": "string",
-          "description": "The order of the opened classes in the list of related subject or sometime the ID of that subject. For example, if the user wants to know detail about first class of subject in the list, then return 'first', if the user wants to know detail about the second classss in the list, then return 'second', if the user wants to know detail about the class with id named '142870', then return the time that class held. If the user doesn't care about the subject, this value will be null"
+    "type": "function",
+    "function": {
+      "name": "get_subject_details",
+      "description": "You are BKchat, a chatbot that helps users find suitable subjects for the semester based on their needs. This function must be called when the user wants to know details about some founded subjects. I will give you a description below with those subjects.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "which_one": {
+            "type": "string",
+            "description": "The order of the opened classes in the list of related subjects or sometimes the ID of that subject. For example, if the user wants to know details about the first class of the subject in the list, then return 'first'. If the user wants to know details about the second class in the list, return 'second'. If the user wants to know details about the class with an ID named '142870', then return the time that class is held. If the user doesn't care about the subject, this value will be null."
+          }
         }
       }
     }
   },
   {
-    "name": "queries_db",
-    "description": "You are BKChat, a chatbot that helps users choose the suitable subjects based on their needs. Of course, we have a database that contains a lot of features of subjects, but we need to infer what users want so that we can query relative laptops from the database. This function must be called when you think that the user tells you about specs they need in a subject, or they change their option. Remember that, if user want to know detail about some founded subject, do not call this function (School/Institute Code, Class Code, Subject Code, Subject Name in Vietnamese, Time, session, and Class type). I will give you a description below with many features to collect.",
-    "parameters": {
-      "type": "object",
-      "properties": {
-        "content": {
-          "type": "string",
-          "description": "Subject code, for example: if user want to learn Information Technology subject, then return IT,if user want to learn Physical Education, then return PE. If student want to learn English and Language, it would be CL "
-        },
-        "week_day": {
-          "type": "integer",
-          "description": "The day that subject open, what day of week that subject open "
-        },
-        "semester": {
-          "type": "string",
-          "description": "The semester for which the user is inquiring about subjects and timetables."
-        },
-        "subject_ID": {
-          "type": "array",
-          "items": {
-            "type": "string",
-            "description": "The manufacturers of the subject that the user wants to study. Must be uppercase in start (IT, PE, CLS, CLG, CH, MI, ...). For example, if the user wants to study subject 'Organic Chemistry', then return ['CH3220']. If the user doesn't care about the manufacturer, this value will be null"
+    "type": "function",
+    "function": {
+      "name": "queries_db",
+      "description": "You are BKChat, a chatbot that helps users choose suitable subjects based on their needs. Of course, we have a database that contains a lot of features of subjects, but we need to infer what users want so that we can query relative subjects from the database. This function must be called when you think that the user tells you about specs they need in a subject, or they change their option. Remember not to call this function if the user wants to know details about specific subjects like School/Institute Code, Class Code, Subject Code, Subject Name in Vietnamese, Time, Session, and Class type. I will give you a description below with many features to collect.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "Weekday": {
+            "type": "integer",
+            "description": "The day that the subject is open, what day of the week that subject is open."
           },
-          "description": "The ID of subjects that the user wants to find."
+          "Semester": {
+            "type": "string",
+            "description": "The semester for which the user is inquiring about subjects and timetables."
+          },
+          "Subject Code": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "description": "The ID of subjects that the user wants to find. Must be uppercase at the beginning (IT, PE, CLS, CLG, CH, MI, ...). For example, if the user wants to study subject 'Organic Chemistry', then return ['CH3220']. If the user doesn't care about the manufacturer, this value will be null."
+            },
+            "description": "The ID of subjects that the user wants to find."
+          },
+          "School/Institute Code": {
+            "type": "string",
+            "description": "The code of the school or institute associated with the subjects and timetables."
+          },
+          "Class Code": {
+            "type": "string",
+            "description": "The code of the class or course in question."
+          },
+          "Accompanying class code": {
+            "type": "string",
+            "description": "The code of any accompanying class, if relevant."
+          },
+          "Subject Name in Vietnamese": {
+            "type": "string",
+            "description": "The name of the subject in Vietnamese."
+          },
+          "Subject Name in English": {
+            "type": "string",
+            "description": "The name of the subject in English."
+          },
+          "Number of credit": {
+            "type": "number",
+            "description": "The number of credits associated with the subject."
+          },
+          "Time": {
+            "type": "string",
+            "description": "The time of day when the class is scheduled."
+          },
+          "Start Period": {
+            "type": "integer",
+            "description": "The starting period of the class."
+          },
+          "End Period": {
+            "type": "integer",
+            "description": "The ending period of the class."
+          },
+          "session": {
+            "type": "string",
+            "description": "The session information for the class, if applicable."
+          },
+          "week": {
+            "type": "string",
+            "description": "The week information for the class."
+          },
+          "Phòng": {
+            "type": "string",
+            "description": "The room or location where the class takes place."
+          },
+          "Need Experiment Class": {
+            "type": "boolean",
+            "description": "Indicates whether an experiment class is required for the subject."
+          },
+          "Current signed_up student": {
+            "type": "integer",
+            "description": "The current number of students signed up for the class."
+          },
+          "Maximun number of student": {
+            "type": "integer",
+            "description": "The maximum number of students allowed in the class."
+          },
+          "Status": {
+            "type": "string",
+            "description": "The status of the class (e.g., 'open,' 'closed,' 'canceled')."
+          },
+          "Class type": {
+            "type": "string",
+            "description": "The type of class (e.g., 'TN, for experiment,' 'lab,' 'LT+BT' for theory and exercise)."
+          },
+          "Faculty Type": {
+            "type": "string",
+            "description": "The type of faculty associated with the subject ('AB',' 'ELITECH,' 'CT CHUẨN')."
+          }
         },
-        "school_code": {
-          "type": "string",
-          "description": "The code of the school or institute associated with the subjects and timetables."
-        },
-        "class_code": {
-          "type": "string",
-          "description": "The code of the class or course in question."
-        },
-        "accompanying_class_code": {
-          "type": "string",
-          "description": "The code of any accompanying class, if relevant."
-        },
-        "subject_code": {
-          "type": "string",
-          "description": "The code of the subject or course in question."
-        },
-        "subject_name_vi": {
-          "type": "string",
-          "description": "The name of the subject in Vietnamese."
-        },
-        "subject_name_en": {
-          "type": "string",
-          "description": "The name of the subject in English."
-        },
-        "credit": {
-          "type": "number",
-          "description": "The number of credits associated with the subject."
-        },
-        "weekday": {
-          "type": "string",
-          "description": "The day of the week when the class is scheduled."
-        },
-        "time": {
-          "type": "string",
-          "description": "The time of day when the class is scheduled."
-        },
-        "start_period": {
-          "type": "integer",
-          "description": "The starting period of the class."
-        },
-        "end_period": {
-          "type": "integer",
-          "description": "The ending period of the class."
-        },
-        "session": {
-          "type": "string",
-          "description": "The session information for the class, if applicable."
-        },
-        "week": {
-          "type": "string",
-          "description": "The week information for the class."
-        },
-        "room": {
-          "type": "string",
-          "description": "The room or location where the class takes place."
-        },
-        "experiment_class": {
-          "type": "boolean",
-          "description": "Indicates whether an experiment class is required for the subject."
-        },
-        "current_students": {
-          "type": "integer",
-          "description": "The current number of students signed up for the class."
-        },
-        "max_students": {
-          "type": "integer",
-          "description": "The maximum number of students allowed in the class."
-        },
-        "status": {
-          "type": "string",
-          "description": "The status of the class (e.g., 'open,' 'closed,' 'canceled')."
-        },
-        "class_type": {
-          "type": "string",
-          "description": "The type of class (e.g., 'lecture,' 'lab,' 'workshop')."
-        },
-        "faculty_type": {
-          "type": "string",
-          "description": "The type of faculty associated with the subject (e.g., 'engineering,' 'business,' 'science')."
-        }
-      },
-      "required": [
-        "manufacturer",
-        "subject_ID",
-        "weekday",
-        "status",
-        "credit",
-        "subject_name_vi",
-        "class_code"
-      ]
+        "required": [
+          "manufacturer",
+          "subject_ID",
+          "weekday",
+          "status",
+          "credit",
+          "subject_name_vi",
+          "class_code"
+        ]
+      }
     }
   },
   {
-    "name": "discovery_more_subject",
-    "description": "This function will be call when user want to discover more subjects over the limitation (After surfing or recommend more than 12 subject). You should return a list of subject that have not been introduced to the user yet. Remember that, if user want to know detail about some founded subject, do not call this function",
-    "parameters": null
+    "type": "function",
+    "function": {
+      "name": "discovery_more_subject",
+      "description": "This function will be called when the user wants to discover more subjects beyond the limitation (after surfing or recommending more than 12 subjects). You should return a list of subjects that have not been introduced to the user yet. Remember not to call this function if the user wants to know details about specific subjects.",
+      "parameters": {
+        "type": "object",
+        "properties": {}
+      }
+    }
   }
 ]

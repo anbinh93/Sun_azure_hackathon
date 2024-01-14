@@ -8,24 +8,16 @@ def build_filter_query(**kwargs):
 
     range_value = {}
 
-    query = 'SELECT * FROM laptop_detail_update\nWHERE 1=1\n'
+    query = 'SELECT * FROM schedule\nWHERE 1=1\n'
 
     for key, value in kwargs.items():
         if key == 'content':
             continue
         if value is None:
             continue
-        if isinstance(value, list):
-            if key == 'disk_type':
-                condition = f"AND lower({key}) LIKE '%{value}%'\n"
-                query += condition
-            elif key == 'cpu' or key == 'screen_resolution':
-                condition = 'AND ('
-                for v in value:
-                    or_condition = f"lower({key}) LIKE '%{v}%' OR "
-                    condition += or_condition
-                # Remove the last OR
-                condition = condition[:-3] + ')\n'
+        if isinstance(value, list):  # Nếu
+            if key == 'Subject Code':
+                condition = f"AND ({key}) LIKE '{value}%' OR ...\n"
                 query += condition
             else:
                 condition = f'{key} IN ('

@@ -26,8 +26,8 @@ if 'current_query' not in st.session_state:
 # if 'current_laptops' not in st.session_state:
 #     st.session_state['current_laptops'] = None
 
-# if 'show_form' not in st.session_state:
-#     st.session_state['show_form'] = False
+if 'show_form' not in st.session_state:
+    st.session_state['show_form'] = False
 
 
 load_dotenv(override=True)
@@ -186,8 +186,6 @@ def queries_db(**kwargs):
 
     headers = []
 
-    query = ''
-
     filename = 'current_query.csv'
 
     csv_path = create_temp_csv_file(headers, query, filename)
@@ -201,7 +199,7 @@ def queries_db(**kwargs):
     if len(query_result) == 0:
         st.session_state.conversation.append(
             {"role": "assistant",
-                "content": "Ui, hiện tại không có laptop nào phù hợp với yêu cầu của bạn rồi. Bạn có thể thay đổi cấu hình hoặc các thông số 1 chút (ví dụ như thay đổi mức giá, thay đổi dung lượng RAM, thay đổi dung lượng ổ cứng,...) để mình tìm kiếm lại nhé"}
+                "content": "Ui, hiện tại không có môn học nào phù hợp với yêu cầu của bạn rồi. Bạn có thể thay đổi yêu cầu 1 chút (ví dụ như thay đổi tên môn, thay đổi mã lớp...) để mình tìm kiếm lại nhé"}
         )
 
         st.chat_message("assistant").write(
@@ -209,11 +207,11 @@ def queries_db(**kwargs):
     else:
         st.session_state.messages.append(
             {"role": "assistant",
-                "content": f"Đã tìm thấy {len(query_result)} laptop phù hợp với yêu cầu của bạn, trước tiên mình giới thiệu qua 5 mẫu laptop phù hợp nhất nhé"}
+                "content": f"Đã tìm thấy {len(query_result)} lớp phù hợp với yêu cầu của bạn, trước tiên mình giới thiệu qua các lớp phù hợp nhất nhé"}
         )
         st.session_state.conversation.append(
             {"role": "assistant",
-                "content": f"Đã tìm thấy {len(query_result)} laptop phù hợp với yêu cầu của bạn, trước tiên mình giới thiệu qua 5 mẫu laptop phù hợp nhất nhé"}
+                "content": f"Đã tìm thấy {len(query_result)} lớp phù hợp với yêu cầu của bạn, trước tiên mình giới thiệu qua các lớp phù hợp nhất nhé"}
         )
         st.chat_message("assistant").write(
             f"Đã tìm thấy {len(query_result)} laptop phù hợp với yêu cầu của bạn, trước tiên mình giới thiệu qua 5 mẫu laptop phù hợp nhất nhé")
@@ -231,7 +229,7 @@ def queries_db(**kwargs):
         st.session_state.current_laptops = header + '\n' + send_content
 
         st.session_state.messages.append(
-            {"role": "system", "content": f'Đây là kết quả mới nhất gồm những laptop phù hợp với tiêu chí người dùng chọn ra. Hãy ghi nhớ nó để tư vấn thật nhiệt tình cho người dùng nhé\n {st.session_state.current_laptops}'}
+            {"role": "system", "content": f'Đây là kết quả mới nhất các lớp phù hợp với tiêu chí người dùng chọn ra. Hãy ghi nhớ nó để tư vấn thật nhiệt tình cho người dùng nhé\n {st.session_state.current_laptops}'}
         )
 
         st.session_state.messages.append(
@@ -275,7 +273,99 @@ def _type_writer(text: str, speed: int = 100) -> None:
         container.markdown(curr_full_text)
         time.sleep(1 / speed)
 
+
 ##################### Function to trigger event #####################
+
+# Em có 1 cái hàm tên gioogns như trong description vào miêu tả nó là khi tôi muốn đăng kí lớp học
+def choose_subjects_or_leave_contact():
+    """
+        This function is call when user want to contact with the human for some purpose (go to store, buy laptop, ...)
+    Returns:
+    """
+
+    # Thank you for using the chatbot
+    msg = 'Trước khi tiếp tục gửi đơn đăng ký mở thêm lớp, em xin phép được hỏi anh/chị một số thông tin nhé'
+    st.session_state.messages.append(
+        {'role': 'assistant', 'content': msg}
+    )
+    _type_writer(msg, speed=40)
+
+    _type_writer(
+        'Anh/chị điền giúp em những thông tin ở cột bên trái với ạ !', speed=40)
+
+    st.session_state['show_form'] = True
+
+    st.rerun()
+
+
+def get_subject_details(which_one: str):
+    if st.session_state.current_laptops:
+        # Get the second last message
+        second_last_message = st.session_state.messages[-2]
+
+        # Get the last message
+        last_message = st.session_state.messages[-1]
+
+        # Get the current laptop
+        current_subject = st.session_state.current_laptops
+
+        with st.spinner('Thinking ...'):
+            response = chat_on_demand(
+                messages=[
+                    second_last_message,
+                    last_message,
+                    {'role': 'system', 'content': f'Người dùng muốn xem thông tin chi tiết của môn học đó: {which_one}, hãy trả lời dựa trên những mã môn học này nhé, nhớ là tìm kiếm xem người dùng muốn xem máy nào: {current_subject}'},
+                ]
+            )
+
+        st.session_state.messages.append(
+            {'role': 'assistant', 'content': response}
+        )
+        st.session_state.conversation.append(
+            {'role': 'assistant', 'content': response}
+        )
+
+        _type_writer(response, speed=100)
+
+
+def discovery_more_laptop():
+    if st.session_state.remain_laptops:
+        # Get the second last message
+        second_last_message = st.session_state.messages[-2]
+
+        # Get the last message
+        last_message = st.session_state.messages[-1]
+
+        # Get the current laptop
+        remain_subject = st.session_state.remain_laptops
+
+        with st.spinner('Thinking ...'):
+            response = chat_on_demand(
+                messages=[
+                    second_last_message,
+                    last_message,
+                    {'role': 'system', 'content': f'Người dùng muốn xem các môn học khacs, hãy trả lời dựa trên những môn học này nhé, nhớ là tìm kiếm dựa trên nhu cầu của người dùng: {st.session_state.user_requirement}. Subject data is {remain_subject}'},
+                ]
+            )
+
+        st.session_state.messages.append(
+            {'role': 'assistant', 'content': response}
+        )
+        st.session_state.conversation.append(
+            {'role': 'assistant', 'content': response}
+        )
+
+        _type_writer(response, speed=100)
+    else:
+        st.session_state.messages.append(
+            {'role': 'system', 'content': 'Hiện tại không còn học phần nào phù hợp với yêu cầu của người dùng nữa rồi, hãy tìm kiếm lại nhé'}
+        )
+        st.session_state.conversation.append(
+            {'role': 'system', 'content': 'Hiện tại không còn học phần nào phù hợp với yêu cầu của người dùng nữa rồi, hãy tìm kiếm lại nhé'}
+        )
+
+        _type_writer(
+            'Hiện tại không còn học phần nào phù hợp với yêu cầu của người dùng nữa rồi, hãy tìm kiếm lại nhé', speed=100)
 
 
 def release_context_token() -> None:
@@ -356,7 +446,7 @@ class ChatGUI():
         # Init OpenAI Client
         self.client = AzureOpenAI(
             api_key=os.getenv("AZURE_OPENAI_KEY"),
-            api_version="2023-05-15",
+            api_version="2023-12-01-preview",
             azure_endpoint=os.getenv("AZURE_OPENAI_ENDPOINT")
         )
 
@@ -440,8 +530,8 @@ class ChatGUI():
                     timeout=30,
                     max_tokens=4096,
                     temperature=1,
-                    # function_call='auto',
-                    # functions=self.FUNCTION_DESCRIPTION
+                    tool_choice='auto',
+                    tools=self.FUNCTION_DESCRIPTION
                 )
 
                 return response
@@ -476,13 +566,15 @@ class ChatGUI():
                 response = self._get_response()
                 answer = response.choices[0].message
 
-            if answer.function_call:
+            print(answer)
+
+            if answer.tool_calls:
                 print(
-                    f'==========> Function call: {answer.function_call.name}')
+                    f'==========> Function call: {answer.tool_calls[0].function.name}')
                 self.trigger_function(
                     status=True,
-                    func_name=answer.function_call.name,
-                    args=json.loads(answer.function_call.arguments)
+                    func_name=answer.tool_calls[0].function.name,
+                    args=json.loads(answer.tool_calls[0].function.arguments)
                 )
             else:
                 _type_writer(answer.content)
